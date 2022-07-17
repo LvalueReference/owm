@@ -1,0 +1,12 @@
+[submodule "deps/curl"]
+	path = deps/curl
+	url = https://github.com/curl/curl
+[submodule "deps/curlpp"]
+	path = deps/curlpp
+	url = https://github.com/jpbarrette/curlpp
+[submodule "deps/simdjson"]
+	path = deps/simdjson
+	url = https://github.com/simdjson/simdjson.git
+[submodule "deps/magic_enum"]
+	path = deps/magic_enum
+	url = https://github.com/Neargye/magic_enum
