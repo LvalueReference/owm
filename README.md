@@ -32,4 +32,4 @@ This library is easy to assemble using the Cmake project
 How to use
 ----------
 
-Read the [Documentation](./doc/basic.md)
+Read the [Documentation](./doc/basics.md)

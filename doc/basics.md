@@ -1,4 +1,4 @@
-Base documentation
+Documentation
 ==================
 
 All methods from the library are in the `owm` namespace. The main class for getting weather is the `owm::weather` class.
