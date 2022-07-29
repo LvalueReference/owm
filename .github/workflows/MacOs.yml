@@ -24,7 +24,7 @@ jobs:
       run: git submodule update --init --recursive
 
     - name: install libs
-      run: brew install curl
+      run: brew install curl openssl
 
     - name: build
       run: mkdir build && cd build && cmake .. && cmake --build .
