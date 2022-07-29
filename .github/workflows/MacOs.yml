@@ -24,8 +24,8 @@ jobs:
       run: git submodule update --init --recursive
 
     - name: install libs
-      run: brew install curl openssl@1.1
+      run: brew install curl openssl
 
     - name: build
-      run: mkdir build && cd build && cmake .. && cmake --build .
+      run: mkdir build && cd build && cmake .. -DOPENSSL_ROOT_DIR=$(brew --prefix openssl@1.1) && cmake --build .
       
