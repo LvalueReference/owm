@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(owm
         LANGUAGES CXX
-        DESCRIPTION "OpenWeatherMap API wrapper for C++")
+        DESCRIPTION "OpenWeatherMap API client in C++"
+        HOMEPAGE_URL "https://github.com/LvalueReference/openweathermap")
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -22,6 +23,7 @@ file(GLOB_RECURSE OWM_HEADERS ${OWM_INCLUDE_DIR}/*.hpp)
 file(GLOB_RECURSE OWM_SOURCE ${OWM_SOURCE_DIR}/*.cpp)
 
 add_subdirectory(deps)
+add_subdirectory(example)
 
 include_directories(${OWM_INCLUDE_DIR})
 
