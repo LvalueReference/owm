@@ -14,7 +14,7 @@ namespace owm{
     public:
         network();
     public:
-        void request(std::string_view, params_t&&);
+        void request(std::string_view, params&&);
         std::string&& response() noexcept;
         const std::string& response() const noexcept;
     };

@@ -4,5 +4,5 @@
 #include <vector>
 
 namespace owm{
-    using params_t = std::vector<std::pair<std::string, std::string>>;
+    using params = std::vector<std::pair<std::string, std::string>>;
 }

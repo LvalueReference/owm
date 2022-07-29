@@ -4,7 +4,7 @@
 
 #include <sstream>
 
-static std::string make_params(owm::params_t&& params){
+static std::string make_params(owm::params&& params){
     std::string result;
     result.reserve(1024);
 
@@ -22,7 +22,7 @@ owm::network::network(){
     _response.reserve(1024);
 }
 
-void owm::network::request(std::string_view url, owm::params_t&& params){
+void owm::network::request(std::string_view url, owm::params&& params){
     std::stringstream stream;
 
     _handle.setOpt(curlpp::Options::Url(std::string{url} + make_params(std::move(params))));

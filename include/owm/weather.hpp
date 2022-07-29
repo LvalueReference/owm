@@ -3,15 +3,12 @@
 #include "misc/params.hpp"
 #include "misc/params_builder.hpp"
 #include "misc/url_builder.hpp"
-#include "owm/response.hpp"
-#include "owm/responses/current_weather_response.hpp"
-#include "responses/hourly_forecast_response.hpp"
+#include "response.hpp"
 #include "network/network.hpp"
 #include "token.hpp"
 #include "exception.hpp"
 
 #include <string_view>
-#include <type_traits>
 
 template <class T>
 concept ResponseConcept = std::same_as<T, owm::current_weather_response> ||
@@ -29,7 +26,7 @@ namespace owm{
         template <wtag Type, class... Args>
         Response by(Args&&...);
     private:
-        [[nodiscard]] params_t&& append(params_t&&) const noexcept;
+        [[nodiscard]] params&& append(params&&) const noexcept;
     };
 }
 
@@ -41,7 +38,7 @@ template <ResponseConcept Response>
 template<owm::wtag Type, class... Args>
 Response owm::weather<Response>::by(Args&&... args){
     _nclient.request(owm::make_url<Response>(), 
-                     append(owm::params<Type>::create(std::forward<Args>(args)...)));
+                     append(owm::params_builder<Type>::create(std::forward<Args>(args)...)));
 
     auto resp = _nclient.response();
 
@@ -52,7 +49,7 @@ Response owm::weather<Response>::by(Args&&... args){
 }
 
 template <ResponseConcept Response>
-owm::params_t&& owm::weather<Response>::append(owm::params_t&& params) const noexcept{
+owm::params&& owm::weather<Response>::append(owm::params&& params) const noexcept{
     params.emplace_back("appid", _data.get_token());
     params.emplace_back("lang", _data.get_lang());
     params.emplace_back("units", _data.get_units());
