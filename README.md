@@ -1,7 +1,9 @@
 [![Linux](https://github.com/LvalueReference/openweathermap/actions/workflows/Linux.yml/badge.svg?branch=master)](https://github.com/LvalueReference/openweathermap/actions/workflows/Linux.yml)
 [![Windows](https://github.com/LvalueReference/openweathermap/actions/workflows/Windows.yml/badge.svg?branch=master)](https://github.com/LvalueReference/openweathermap/actions/workflows/Windows.yml)
+[![MacOS](https://github.com/LvalueReference/openweathermap/actions/workflows/MacOs.yml/badge.svg)](https://github.com/LvalueReference/openweathermap/actions/workflows/MacOs.yml)
+[![CodeFactor](https://www.codefactor.io/repository/github/lvaluereference/openweathermap/badge/master)](https://www.codefactor.io/repository/github/lvaluereference/openweathermap/overview/master)
 
-OpenWeatherMap API wrapper for C++
+OpenWeatherMap
 ==================================
 
 Quick Start
