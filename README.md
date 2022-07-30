@@ -15,7 +15,7 @@ This library is easy to assemble using the Cmake project
 * Copy the repository to your project
 
   ```sh
-  git clone --recursive https://github.com/LvalueReference/openweathermap
+  git clone --recursive https://github.com/LvalueReference/owm
   ```
 * Include library to your CMake project<br>
   For example:
