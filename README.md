@@ -5,7 +5,7 @@
 
 ![OWM](./owm_logo.png)
 
-OpenWeatherMap
+OWM
 ==================================
 
 Quick Start
