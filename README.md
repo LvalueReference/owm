@@ -3,6 +3,8 @@
 [![MacOS](https://github.com/LvalueReference/openweathermap/actions/workflows/MacOs.yml/badge.svg)](https://github.com/LvalueReference/openweathermap/actions/workflows/MacOs.yml)
 [![CodeFactor](https://www.codefactor.io/repository/github/lvaluereference/openweathermap/badge/master)](https://www.codefactor.io/repository/github/lvaluereference/openweathermap/overview/master)
 
+![OWM](./owm_logo.png)
+
 OpenWeatherMap
 ==================================
 
