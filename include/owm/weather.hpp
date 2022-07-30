@@ -11,8 +11,8 @@
 #include <string_view>
 
 template <class T>
-concept ResponseConcept = std::same_as<T, owm::current_weather_response> ||
-                          std::same_as<T, owm::hourly_forecast_response>;
+concept ResponseConcept = std::same_as<T, owm::current> ||
+                          std::same_as<T, owm::hourly>;
 
 namespace owm{
     template <ResponseConcept Response>

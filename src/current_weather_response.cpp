@@ -5,9 +5,9 @@
 #include <charconv>
 #include <iostream>
 
-using response = owm::current_weather_response;
+using response = owm::current;
 
-response::current_weather_response(std::string&& json_string){
+response::current(std::string&& json_string){
     _json = _parser.parse(json_string);
 }
 

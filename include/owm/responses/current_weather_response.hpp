@@ -5,12 +5,12 @@
 #include <string_view>
 
 namespace owm{
-    class current_weather_response{
+    class current{
     private:
         simdjson::dom::element _json;
         simdjson::dom::parser _parser;
     public:
-        current_weather_response(std::string&&);
+        current(std::string&&);
     public:
         static constexpr std::string_view target_url = "https://api.openweathermap.org/data/2.5/weather?";
 
