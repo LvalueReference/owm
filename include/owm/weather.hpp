@@ -43,7 +43,7 @@ Response owm::weather<Response>::by(Args&&... args){
     auto resp = _nclient.response();
 
     if(exception::is_error_code(resp))
-        throw exception{resp};
+        throw exception{std::move(resp)};
 
     return Response{std::move(resp)};
 }
