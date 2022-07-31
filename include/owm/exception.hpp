@@ -14,7 +14,17 @@ namespace owm{
         std::string _message;
         int64_t _code;
     public:
-        explicit exception(std::string) noexcept;
+        exception(std::string&&) noexcept;
+    public:
+        enum class codes: int64_t{
+            bad_api_key = 401,
+            bad_api_request = 404,
+            limit_error = 429,
+            server_error1 = 500,
+            server_error2 = 502,
+            server_error3 = 503,
+            server_error4 = 504
+        };
     public:
         const char* what() const noexcept override;
         static bool is_error_code(const std::string&);
