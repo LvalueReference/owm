@@ -3,9 +3,7 @@
 #include "magic_enum.hpp"
 
 #include <charconv>
-#include <cstdint>
-#include <iostream>
-#include <string>
+#include <ranges>
 
 int64_t code_to_int(auto json){
     int64_t res;
@@ -32,7 +30,7 @@ owm::exception::exception(std::string&& resp) noexcept
 
 const char* owm::exception::what() const noexcept{
     static std::string res;
-    res = std::to_string(_code) + ":" + _message;
+    res = "owm: " + std::to_string(_code) + ":" + _message;
 
     return res.c_str();
 }
@@ -53,21 +51,16 @@ bool owm::exception::is_error_code(const std::string& resp){
     simdjson::dom::parser parser;
     simdjson::dom::element json = parser.parse(resp);
 
-    bool res = false;
+    static constexpr error_codes codes[] = {
+        error_codes::bad_api_key,
+        error_codes::bad_api_request,
+        error_codes::limit_error,
+        error_codes::server_error1,
+        error_codes::server_error2,
+        error_codes::server_error3,
+        error_codes::server_error4
+    };
 
-    switch(static_cast<codes>(code_to_int(json["cod"]))){
-        case codes::bad_api_key: [[fallthrough]];
-        case codes::bad_api_request: [[fallthrough]];
-        case codes::limit_error: [[fallthrough]];
-        case codes::server_error1: [[fallthrough]];
-        case codes::server_error2: [[fallthrough]];
-        case codes::server_error3: [[fallthrough]];
-        case codes::server_error4:
-            res = true;
-            break;
-        default:
-            res = false;
-    }
-
-    return res;
+    return std::ranges::find(codes, static_cast<error_codes>(code_to_int(json["cod"]))) 
+           != std::end(codes);
 }

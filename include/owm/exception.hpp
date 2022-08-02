@@ -16,7 +16,7 @@ namespace owm{
     public:
         exception(std::string&&) noexcept;
     public:
-        enum class codes: int64_t{
+        enum class error_codes: int64_t{
             bad_api_key = 401,
             bad_api_request = 404,
             limit_error = 429,
