@@ -10,11 +10,11 @@
 
 #include <string_view>
 
-template <class T>
-concept ResponseConcept = std::same_as<T, owm::current> ||
-                          std::same_as<T, owm::hourly>;
-
 namespace owm{
+    template <class T>
+    concept ResponseConcept = std::same_as<T, owm::current> ||
+                              std::same_as<T, owm::hourly>;
+
     template <ResponseConcept Response>
     class weather{
     private:
@@ -30,11 +30,11 @@ namespace owm{
     };
 }
 
-template <ResponseConcept Response>
+template <owm::ResponseConcept Response>
 owm::weather<Response>::weather(owm::token token) noexcept
     : _data(token){}
 
-template <ResponseConcept Response>
+template <owm::ResponseConcept Response>
 template<owm::wtag Type, class... Args>
 Response owm::weather<Response>::by(Args&&... args){
     _nclient.request(owm::make_url<Response>(), 
@@ -48,7 +48,7 @@ Response owm::weather<Response>::by(Args&&... args){
     return Response{std::move(resp)};
 }
 
-template <ResponseConcept Response>
+template <owm::ResponseConcept Response>
 owm::params&& owm::weather<Response>::append(owm::params&& params) const noexcept{
     params.emplace_back("appid", _data.get_token());
     params.emplace_back("lang", _data.get_lang());

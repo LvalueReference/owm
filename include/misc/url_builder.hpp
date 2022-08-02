@@ -1,11 +1,8 @@
 #pragma once
 
 #include <string>
-#include <string_view>
 #include <type_traits>
 #include <concepts>
-
-#define URL "https://api.openweathermap.org/data/3.0/onecall?exclude="
 
 namespace owm{
     template <class T>
@@ -18,5 +15,3 @@ namespace owm{
         return std::string{Response::target_url};
     }
 }
-
-#undef URL
