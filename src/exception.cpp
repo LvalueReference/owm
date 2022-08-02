@@ -3,7 +3,6 @@
 #include "magic_enum.hpp"
 
 #include <charconv>
-#include <ranges>
 
 int64_t code_to_int(auto json){
     int64_t res;
