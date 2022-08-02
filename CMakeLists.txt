@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(owm
         LANGUAGES CXX
         DESCRIPTION "OpenWeatherMap API client in C++"
-        HOMEPAGE_URL "https://github.com/LvalueReference/openweathermap")
+        HOMEPAGE_URL "https://github.com/LvalueReference/owm")
 
 set(CMAKE_CXX_STANDARD 20)
 
