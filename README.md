@@ -6,6 +6,7 @@
 
 OWM
 ==================================
+`OWM` is a C++ implementation of the OpenWeatherMap API
 
 Quick Start
 -----------
