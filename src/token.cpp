@@ -5,7 +5,7 @@
 using namespace magic_enum;
 
 owm::token::token(std::string_view token, owm::units units, owm::lang lang) noexcept
-    : _token(token), _lang(lang), _units(units){}
+    : _units(units), _lang(lang), _token(token){}
 
 std::string owm::token::get_token() const noexcept{
     return _token;
