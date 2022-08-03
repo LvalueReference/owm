@@ -4,13 +4,22 @@ project(owm
         DESCRIPTION "OpenWeatherMap API client in C++"
         HOMEPAGE_URL "https://github.com/LvalueReference/owm")
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
+message(STATUS "owm: build type: ${CMAKE_BUILD_TYPE}")
 
 set(OWM_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(OWM_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(OWM_BUILD_SHARED_LIBS TRUE)
-set(CURL_INCLUDE_DIR ${CURL_SOURCE_DIR}/include)
 set(CURL_LIBRARY libcurl)
+set(CURL_INCLUDE_DIR ${CURL_SOURCE_DIR}/include)
 set(CURLPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/curlpp/include)
 
 if (${OWM_BUILD_SHARED_LIBS} EQUAL TRUE)
