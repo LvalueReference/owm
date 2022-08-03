@@ -24,8 +24,8 @@ jobs:
       run: git submodule update --init --recursive
       
     - name: Install libraries
-      run: sudo apt update; sudo apt install libcurl4 libcurl4-openssl-dev
+      run: sudo apt update; sudo apt install libcurl4 libcurl4-openssl-dev clang
 
     - name: Build
-      run: mkdir build; cd build; cmake ..; cmake --build .
+      run: mkdir build; cd build; cmake .. CXX=/usr/bin/clang; cmake --build .
       
