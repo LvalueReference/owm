@@ -3,6 +3,7 @@
 #include "magic_enum.hpp"
 
 #include <charconv>
+#include <array>
 
 int64_t code_to_int(auto json){
     int64_t res;
@@ -50,7 +51,9 @@ bool owm::exception::is_error_code(const std::string& resp){
     simdjson::dom::parser parser;
     simdjson::dom::element json = parser.parse(resp);
 
-    static constexpr error_codes codes[] = {
+    auto code = json["cod"];
+
+    static constexpr std::array codes = {
         error_codes::bad_api_key,
         error_codes::bad_api_request,
         error_codes::limit_error,
@@ -60,6 +63,7 @@ bool owm::exception::is_error_code(const std::string& resp){
         error_codes::server_error4
     };
 
-    return std::ranges::find(codes, static_cast<error_codes>(code_to_int(json["cod"]))) 
-           != std::end(codes);
+    return std::find(codes.begin(), 
+                     codes.end(), 
+                     static_cast<error_codes>(code_to_int(code))) != std::end(codes);
 }
