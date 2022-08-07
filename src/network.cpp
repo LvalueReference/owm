@@ -18,10 +18,6 @@ static std::string make_params(owm::params&& params){
     return result;
 }
 
-owm::network::network(){
-    _response.reserve(1024);
-}
-
 void owm::network::request(std::string_view url, owm::params&& params){
     std::stringstream stream;
 
@@ -29,13 +25,9 @@ void owm::network::request(std::string_view url, owm::params&& params){
     _handle.setOpt(curlpp::Options::WriteStream(&stream));
     _handle.perform();
 
-    _response = stream.str();
+    _response = std::move(stream).str();
 }
 
-std::string&& owm::network::response() noexcept{
+std::string owm::network::response() && noexcept{
     return std::move(_response);
-}
-
-const std::string& owm::network::response() const noexcept{
-    return _response;
 }

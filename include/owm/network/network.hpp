@@ -12,10 +12,7 @@ namespace owm{
         curlpp::Easy _handle;
         std::string _response;
     public:
-        network();
-    public:
         void request(std::string_view, params&&);
-        std::string&& response() noexcept;
-        const std::string& response() const noexcept;
+        std::string response() && noexcept;
     };
 }

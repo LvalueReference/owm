@@ -51,19 +51,9 @@ bool owm::exception::is_error_code(const std::string& resp){
     simdjson::dom::parser parser;
     simdjson::dom::element json = parser.parse(resp);
 
-    auto code = json["cod"];
+    auto code = static_cast<error_codes>(code_to_int(json["cod"]));
 
-    static constexpr std::array codes = {
-        error_codes::bad_api_key,
-        error_codes::bad_api_request,
-        error_codes::limit_error,
-        error_codes::server_error1,
-        error_codes::server_error2,
-        error_codes::server_error3,
-        error_codes::server_error4
-    };
+    constexpr auto codes = magic_enum::enum_values<error_codes>();
 
-    return std::find(codes.begin(), 
-                     codes.end(), 
-                     static_cast<error_codes>(code_to_int(code))) != std::end(codes);
+    return std::find(codes.begin(), codes.end(), code) != std::end(codes);
 }

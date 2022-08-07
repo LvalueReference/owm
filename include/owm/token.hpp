@@ -10,14 +10,11 @@ namespace owm{
                     th, tr, ua, uk, vi, zh_cn, zh_tw, zu};
 
     class token{
-    private:
-        units _units;
-        lang _lang;
-        std::string _token;
     public:
-        token(std::string_view, units = units::metric, lang = lang::en) noexcept;
-        std::string get_units() const noexcept;
-        std::string get_lang() const noexcept;
-        std::string get_token() const noexcept;
+        std::string units;
+        std::string lang;
+        std::string appid;
+    public:
+        token(std::string_view, enum units = units::metric, enum lang = lang::en) noexcept;
     };
 }

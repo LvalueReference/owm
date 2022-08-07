@@ -18,7 +18,6 @@ namespace owm{
     template <ResponseConcept Response>
     class weather{
     private:
-        network _nclient;
         token _data;
     public:
         weather(token) noexcept;
@@ -35,12 +34,14 @@ owm::weather<Response>::weather(owm::token token) noexcept
     : _data(token){}
 
 template <owm::ResponseConcept Response>
-template<owm::wtag Type, class... Args>
+template <owm::wtag Type, class... Args>
 Response owm::weather<Response>::by(Args&&... args){
+    owm::network _nclient;
+    
     _nclient.request(owm::make_url<Response>(), 
                      append(owm::params_builder<Type>::create(std::forward<Args>(args)...)));
 
-    auto resp = _nclient.response();
+    auto resp = std::move(_nclient).response();
 
     if(exception::is_error_code(resp))
         throw exception{std::move(resp)};
@@ -50,9 +51,9 @@ Response owm::weather<Response>::by(Args&&... args){
 
 template <owm::ResponseConcept Response>
 owm::params&& owm::weather<Response>::append(owm::params&& params) const noexcept{
-    params.emplace_back("appid", _data.get_token());
-    params.emplace_back("lang", _data.get_lang());
-    params.emplace_back("units", _data.get_units());
+    params.emplace_back("appid", _data.appid);
+    params.emplace_back("lang", _data.lang);
+    params.emplace_back("units", _data.units);
 
     return std::move(params);
 }

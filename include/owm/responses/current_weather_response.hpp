@@ -34,7 +34,6 @@ namespace owm{
         int64_t dt() const noexcept;
         int64_t sys_type() const noexcept;
         int64_t sys_id() const noexcept;
-        double sys_message() const noexcept;
         std::string_view sys_country() const noexcept;
         int64_t sys_sunrise() const noexcept;
         int64_t sys_sunset() const noexcept;

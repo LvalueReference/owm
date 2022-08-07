@@ -91,10 +91,6 @@ int64_t response::sys_id() const noexcept{
     return _json["sys"]["id"];
 }
 
-double response::sys_message() const noexcept{
-    return _json["sys"]["message"];
-}
-
 std::string_view response::sys_country() const noexcept{
     return _json["sys"]["country"];
 }
