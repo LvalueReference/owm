@@ -3,9 +3,8 @@
 #include "magic_enum.hpp"
 
 #include <charconv>
-#include <array>
 
-int64_t code_to_int(auto json){
+static inline int64_t code_to_int(auto json) noexcept{
     int64_t res;
 
     if (json.is_string()){

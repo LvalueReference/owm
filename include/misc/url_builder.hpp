@@ -11,7 +11,7 @@ namespace owm{
     } && std::constructible_from<std::string, decltype(T::target_url)>;
     
     template <WeatherResponseConcept Response>
-    std::string make_url(){
+    inline std::string make_url(){
         return std::string{Response::target_url};
     }
 }
