@@ -3,19 +3,20 @@
 #include "misc/params.hpp"
 
 #include <sstream>
+#include <numeric>
+#include <string>
 
 static std::string make_params(owm::params&& params){
-    std::string result;
-    result.reserve(1024);
+    auto make = [](std::string&& out, auto&& pair) -> std::string{
+        out += pair.first;
+        out += "=";
+        out += pair.second;
+        out += "&";
 
-    for (const auto& [key, value] : params){
-        result += key;
-        result += "=";
-        result += value;
-        result += "&";
-    }
+        return out;
+    };
 
-    return result;
+    return std::accumulate(params.begin(), params.end(), std::string(), make);
 }
 
 void owm::network::request(std::string_view url, owm::params&& params){

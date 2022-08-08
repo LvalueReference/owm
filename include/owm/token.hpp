@@ -9,12 +9,11 @@ namespace owm{
                     it, ja, kr, la, lt, mk, no, nl, pl, pt, pt_br, ro, ru, sv, se, sk, sl, sp, es, sr,
                     th, tr, ua, uk, vi, zh_cn, zh_tw, zu};
 
-    class token{
-    public:
+    struct token{
         std::string units;
         std::string lang;
         std::string appid;
-    public:
+
         token(std::string_view, enum units = units::metric, enum lang = lang::en) noexcept;
     };
 }

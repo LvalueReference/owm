@@ -5,7 +5,7 @@
 #include <string>
 
 namespace owm{
-    enum class wtag{city_name, city_id, geo_coords};
+    enum wtag{city_name, city_id, geo_coords};
 
     template <wtag Type>
     struct params_builder{};
