@@ -35,7 +35,7 @@ owm::weather<Response>::weather(owm::token token) noexcept
 
 template <owm::ResponseConcept Response>
 template <owm::wtag Type, class... Args>
-Response owm::weather<Response>::by(Args&&... args){
+Response owm::weather<Response>::by(Args&&... args) const noexcept{
     owm::network _nclient;
     
     _nclient.request(owm::make_url<Response>(), 
