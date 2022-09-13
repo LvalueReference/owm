@@ -10,7 +10,7 @@ namespace owm{
         simdjson::dom::element _json;
         simdjson::dom::parser _parser;
     public:
-        current(std::string&&);
+        explicit current(const std::string&) noexcept;
     public:
         static constexpr std::string_view target_url = "https://api.openweathermap.org/data/2.5/weather?";
 

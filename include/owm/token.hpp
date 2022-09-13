@@ -14,6 +14,6 @@ namespace owm{
         std::string lang;
         std::string appid;
 
-        token(std::string_view, enum units = units::metric, enum lang = lang::en) noexcept;
+        explicit token(std::string_view, enum units = units::metric, enum lang = lang::en) noexcept;
     };
 }

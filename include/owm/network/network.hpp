@@ -13,6 +13,6 @@ namespace owm{
         std::string _response;
     public:
         void request(std::string_view, params&&);
-        std::string response() && noexcept;
+        std::string&& response() && noexcept;
     };
 }

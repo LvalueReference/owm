@@ -4,10 +4,9 @@
 
 #include <sstream>
 #include <numeric>
-#include <string>
 
-static std::string make_params(owm::params&& params){
-    auto make = [](std::string&& out, auto&& pair) -> std::string{
+inline auto make_params(owm::params&& params){
+    auto make = [](std::string out, const auto& pair){
         out += pair.first;
         out += "=";
         out += pair.second;
@@ -29,6 +28,6 @@ void owm::network::request(std::string_view url, owm::params&& params){
     _response = std::move(stream).str();
 }
 
-std::string owm::network::response() && noexcept{
+std::string&& owm::network::response() && noexcept{
     return std::move(_response);
 }

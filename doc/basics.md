@@ -7,7 +7,7 @@ All methods from the library are in the `owm` namespace. The main class for gett
 
 `owm::weather`
 --------------
-This class is a template class and accepts responses classes as a template: `owm::current_weather_response` (`owm::current` as typedef), `owm::hourly_forecast_response`(`owm::hourly` as typedef).
+This class is a template class and accepts responses classes as a template: `owm::current`, `owm::hourly (temporarily unavailable)`.
 The class constructor accepts an object of type `owm::token`.
 
 ---
@@ -49,7 +49,7 @@ In case of an error from the API side, the by method will throw `owm::exception`
 
 * `owm::exception::what()`
    
-   > Virtual method that returns a string with the code and description of the error in the format `owm: code:description`
+   > Virtual method that returns a string with the code and description of the error in the format `owm: <code>:<description>`
 
 * `owm::exception::error_message()`
   

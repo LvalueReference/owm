@@ -3,8 +3,10 @@
 #include "magic_enum.hpp"
 
 #include <charconv>
+#include <sstream>
+#include <array>
 
-static inline int64_t code_to_int(auto json) noexcept{
+inline int64_t code_to_int(auto json) noexcept{
     int64_t res;
 
     if (json.is_string()){
@@ -16,28 +18,31 @@ static inline int64_t code_to_int(auto json) noexcept{
     }
 
     return res;
-};
+}
 
 owm::exception::exception(std::string&& resp) noexcept
     : _response(std::move(resp))
 {
     _json = _parser.parse(_response);
     _message = _json["message"];
-
     _code = code_to_int(_json["cod"]);
 }
 
 const char* owm::exception::what() const noexcept{
-    static std::string res;
-    res = "owm: " + std::to_string(_code) + ":" + _message;
+    std::stringstream res;
+    res << "owm: " << std::to_string(_code) << ":" << _message;
 
-    return res.c_str();
+    _m_what = std::move(res).str();
+
+    return _m_what.data();
 }
 
+[[maybe_unused]] 
 std::string_view owm::exception::show_json() const noexcept{
     return _response;
 }
 
+[[maybe_unused]] 
 std::string_view owm::exception::error_message() const noexcept{
     return _message;
 }
@@ -50,9 +55,7 @@ bool owm::exception::is_error_code(const std::string& resp){
     simdjson::dom::parser parser;
     simdjson::dom::element json = parser.parse(resp);
 
-    auto code = static_cast<error_codes>(code_to_int(json["cod"]));
+    int64_t code = code_to_int(json["cod"]);
 
-    constexpr auto codes = magic_enum::enum_values<error_codes>();
-
-    return std::find(codes.begin(), codes.end(), code) != std::end(codes);
+    return code > 400;
 }

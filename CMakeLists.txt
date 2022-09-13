@@ -29,15 +29,22 @@ endif()
 file(GLOB_RECURSE OWM_HEADERS ${OWM_INCLUDE_DIR}/*.hpp)
 file(GLOB_RECURSE OWM_SOURCE ${OWM_SOURCE_DIR}/*.cpp)
 
-add_subdirectory(deps)
+add_subdirectory(libs)
 
 include_directories(${OWM_INCLUDE_DIR})
 
 add_library(owm ${OWM_BUILD_TYPE} ${OWM_HEADERS} ${OWM_SOURCE})
+
 target_link_libraries(owm PUBLIC 
     CURL::libcurl 
     simdjson::simdjson 
-    magic_enum::magic_enum 
+    magic_enum::magic_enum
     curlpp)
 target_include_directories(owm PUBLIC ${CURLPP_INCLUDE_DIR})
-target_include_directories(owm PUBLIC ${OWM_INCLUDE_DIR})
+
+target_include_directories(owm PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/owm>
+        $<INSTALL_INTERFACE:include/owm>)
+target_include_directories(owm PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>)

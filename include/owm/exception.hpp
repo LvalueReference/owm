@@ -12,9 +12,10 @@ namespace owm{
         simdjson::dom::parser _parser;
         std::string _response;
         std::string _message;
+        mutable std::string _m_what;
         int64_t _code;
     public:
-        exception(std::string&&) noexcept;
+        explicit exception(std::string&&) noexcept;
     public:
         enum class error_codes: int64_t{
             bad_api_key = 401,
@@ -28,8 +29,8 @@ namespace owm{
     public:
         const char* what() const noexcept override;
         static bool is_error_code(const std::string&);
-        std::string_view show_json() const noexcept;
-        std::string_view error_message() const noexcept;
+        [[maybe_unused]] std::string_view show_json() const noexcept;
+        [[maybe_unused]] std::string_view error_message() const noexcept;
         int64_t error_code() const noexcept;
     };
 }

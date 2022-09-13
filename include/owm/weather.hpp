@@ -1,6 +1,5 @@
 #pragma once
 
-#include "misc/params.hpp"
 #include "misc/params_builder.hpp"
 #include "misc/url_builder.hpp"
 #include "response.hpp"
@@ -9,6 +8,7 @@
 #include "exception.hpp"
 
 #include <string_view>
+#include <utility>
 
 namespace owm{
     template <class T>
@@ -20,10 +20,10 @@ namespace owm{
     private:
         token _data;
     public:
-        weather(token) noexcept;
+        explicit weather(token) noexcept;
     public:
         template <wtag Type, class... Args>
-        Response by(Args&&...);
+        Response by(Args&&...) const;
     private:
         [[nodiscard]] params&& append(params&&) const noexcept;
     };
@@ -31,22 +31,23 @@ namespace owm{
 
 template <owm::ResponseConcept Response>
 owm::weather<Response>::weather(owm::token token) noexcept
-    : _data(token){}
+    : _data(std::move(token)){}
 
 template <owm::ResponseConcept Response>
 template <owm::wtag Type, class... Args>
-Response owm::weather<Response>::by(Args&&... args){
-    owm::network _nclient;
+Response owm::weather<Response>::by(Args&&... args) const{
+    owm::network network;
     
-    _nclient.request(owm::make_url<Response>(), 
-                     append(owm::params_builder<Type>::create(std::forward<Args>(args)...)));
+    network.request(owm::make_url<Response>(),
+                    append(owm::params_builder<Type>::create(std::forward<Args>(args)...)));
 
-    auto resp = std::move(_nclient).response();
+    auto resp = std::move(network).response();
 
-    if(exception::is_error_code(resp))
-        throw exception{std::move(resp)};
+    if(owm::exception::is_error_code(resp)){
+        throw owm::exception{std::move(resp)};
+    }
 
-    return Response{std::move(resp)};
+    return Response{resp};
 }
 
 template <owm::ResponseConcept Response>

@@ -1,13 +1,11 @@
 #include "owm/responses/current_weather_response.hpp"
-#include "simdjson/dom/element.h"
 
 #include <string>
 #include <charconv>
-#include <iostream>
 
 using response = owm::current;
 
-response::current(std::string&& json_string){
+response::current(const std::string& json_string) noexcept{
     _json = _parser.parse(json_string);
 }
 
