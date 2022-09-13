@@ -25,7 +25,7 @@ This library is easy to assemble using the Cmake project
   cmake_minimum_required(VERSION 3.16)
   project(test)
 
-  add_subdirectory(openweathermap)
+  add_subdirectory(owm)
 
   add_executable(test main.cpp)
   target_link_libraries(test owm)
@@ -37,3 +37,15 @@ How to use
 ----------
 
 Read the [Documentation](./doc/basics.md)
+
+Minimum requirements
+--------------------
+
+|C++ Standard |   Clang  |   GCC  |        MSVC        |
+|:-----------:|:--------:|:------:|:------------------:|
+|    C++20    | clang-14 | gcc-10 | MSVC 19.32.31332.0 |
+
+Note
+----
+
+Getting weather via `owm::hourly` is not yet available due to ~~lack of money for a subscription~~ complex implementation
