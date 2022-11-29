@@ -5,23 +5,23 @@
 #include <sstream>
 #include <numeric>
 
-inline auto make_params(owm::params&& params){
-    auto make = [](std::string out, const auto& pair){
-        out += pair.first;
-        out += "=";
-        out += pair.second;
-        out += "&";
+void owm::network::request(const std::string& url, owm::params&& params){
+    using namespace std::string_literals;
 
-        return out;
-    };
-
-    return std::accumulate(params.begin(), params.end(), std::string(), make);
-}
-
-void owm::network::request(std::string_view url, owm::params&& params){
     std::stringstream stream;
 
-    _handle.setOpt(curlpp::Options::Url(std::string{url} + make_params(std::move(params))));
+    auto make_params = [](owm::params&& params){
+        return std::accumulate(params.begin(), params.end(), ""s, [](std::string out, const auto& pair){
+            out += pair.first;
+            out += "="s;
+            out += pair.second;
+            out += "&"s;
+
+            return out;
+        });
+    };
+
+    _handle.setOpt(curlpp::Options::Url(url + make_params(std::move(params))));
     _handle.setOpt(curlpp::Options::WriteStream(&stream));
     _handle.perform();
 

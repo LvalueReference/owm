@@ -10,9 +10,9 @@ namespace owm{
     class network{
     private:
         curlpp::Easy _handle;
-        std::string _response;
+        std::string  _response;
     public:
-        void request(std::string_view, params&&);
+        void request(const std::string&, params&&);
         std::string&& response() && noexcept;
     };
 }

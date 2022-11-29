@@ -43,9 +43,8 @@ Response owm::weather<Response>::by(Args&&... args) const{
 
     auto resp = std::move(network).response();
 
-    if(owm::exception::is_error_code(resp)){
+    if(owm::exception::is_error_code(resp))
         throw owm::exception{std::move(resp)};
-    }
 
     return Response{resp};
 }
