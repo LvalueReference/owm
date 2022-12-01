@@ -10,3 +10,6 @@
 [submodule "deps/magic_enum"]
 	path = libs/magic_enum
 	url = https://github.com/Neargye/magic_enum
+[submodule "examples/fmt"]
+	path = examples/fmt
+	url = https://github.com/fmtlib/fmt.git
