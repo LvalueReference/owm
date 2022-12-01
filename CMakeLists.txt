@@ -30,6 +30,7 @@ file(GLOB_RECURSE OWM_HEADERS ${OWM_INCLUDE_DIR}/*.hpp)
 file(GLOB_RECURSE OWM_SOURCE ${OWM_SOURCE_DIR}/*.cpp)
 
 add_subdirectory(libs)
+add_subdirectory(examples)
 
 include_directories(${OWM_INCLUDE_DIR})
 
