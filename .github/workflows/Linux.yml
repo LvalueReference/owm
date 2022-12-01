@@ -20,6 +20,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
+    - name: lsb_release
+      run: lsb_release -a
+    
     - name: Update submodules
       run: git submodule update --init --recursive
       
@@ -27,5 +30,5 @@ jobs:
       run: sudo apt update; sudo apt install libcurl4 libcurl4-openssl-dev clang
 
     - name: Build
-      run: mkdir build; cd build; cmake .. CXX=/usr/bin/clang; cmake --build .
+      run: mkdir build; cd build; cmake .. -DCMAKE_CXX_COMPILER=/usr/bin/clang++; cmake --build .
       
