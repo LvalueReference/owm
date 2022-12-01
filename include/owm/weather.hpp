@@ -31,7 +31,7 @@ namespace owm{
 
 template <owm::ResponseConcept Response>
 owm::weather<Response>::weather(owm::token token) noexcept
-    : _data(std::move(token)){}
+    : _data(token){}
 
 template <owm::ResponseConcept Response>
 template <owm::wtag Type, class... Args>
@@ -51,9 +51,9 @@ Response owm::weather<Response>::by(Args&&... args) const{
 
 template <owm::ResponseConcept Response>
 owm::params&& owm::weather<Response>::append(owm::params&& params) const noexcept{
-    params.emplace_back("appid", _data.appid);
-    params.emplace_back("lang",  _data.lang);
-    params.emplace_back("units", _data.units);
+    params.emplace_back("appid", _data._appid);
+    params.emplace_back("lang",  _data._lang);
+    params.emplace_back("units", _data._units);
 
     return std::move(params);
 }
