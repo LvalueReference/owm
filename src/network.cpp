@@ -1,5 +1,6 @@
 #include "owm/network/network.hpp"
 #include "curlpp/Options.hpp"
+#include "curlpp/cURLpp.hpp"
 #include "misc/params.hpp"
 
 #include <sstream>
@@ -14,7 +15,7 @@ void owm::network::request(const std::string& url, owm::params&& params){
         return std::accumulate(params.begin(), params.end(), ""s, [](std::string out, const auto& pair){
             out += pair.first;
             out += "="s;
-            out += pair.second;
+            out += curlpp::escape(pair.second);
             out += "&"s;
 
             return out;

@@ -6,10 +6,12 @@
 
 OWM
 ==================================
-`OWM` is a C++ implementation of the OpenWeatherMap API
+`OWM` is a C++ implementation of the [OpenWeatherMap API](https://openweathermap.org/api)
 
 # Before the beginning
 First of all, to start working with the library, you need to get an API key provided by OpenWeatherMap. You can create a key [here](https://home.openweathermap.org/api_keys). It is important to note that with a free subscription, you will only be able to receive the current weather. To get access to all the features of the API, you need to purchase a subscription. After you have received the key, you can start working with the library.
+
+**IMPORTANT!** Access to the OpenWeatherMap API services is provided by a paid subscription and with a free subscription you will not have access to all the functionality of the library. Learn more about subscribing to the service [here](https://openweathermap.org/price).
 
 # Quick start
 Include the weather.hpp header file to use the library
@@ -86,6 +88,8 @@ auto by_id = weather.by<owm::city_id>(1234);
 auto by_coords = weather.by<owm::geo_coords>(123.4, 567.8);
 ```
 
+In case of an API error, the `by()` method will throw an exception of type `owm::exception`, where you can get more specific information about the error.
+
 ## Response classes
 These classes contain methods that are described in the OpenWeatherMap API documentation
 
@@ -95,7 +99,7 @@ These classes contain methods that are described in the OpenWeatherMap API docum
 In addition to the above, the `owm::hourly` class contains the `list()` method, which returns a `std::vector<owm::hourly_list>`, which stores the list methods described in the json string. List methods can be found [here](https://openweathermap.org/api/hourly-forecast#:~:text=this%20API%20call-,list,-list.dt%20Time).
 ```cpp
 owm::weather<owm::hourly> forecast{token};
-std::cout << "City: " << forecast.city_name() << std::endl; //using owm::hourly class methods
+std::cout << "City: " << forecast.by<owm::city_name>("City").description() << std::endl; //using owm::hourly class methods
 std::cout << "Forecast:" << std::endl;
 
 for (const auto& elem : forecast.list()){
@@ -108,7 +112,7 @@ A better example can be found [here](./examples/example.cpp).
 # CMake integration
 The project can be easily linked to your cmake project
 ```cmake
-cmake_minimum_required(VERSION ${CMAKE_VERSION)
+cmake_minimum_required(VERSION ${CMAKE_VERSION})
 project(test_proj CXX)
 
 set(CMAKE_CXX_STANDARD 20)

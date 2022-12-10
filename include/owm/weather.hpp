@@ -12,8 +12,7 @@
 
 namespace owm{
     template <class T>
-    concept ResponseConcept = std::same_as<T, owm::current> ||
-                              std::same_as<T, owm::hourly>;
+    concept ResponseConcept = std::same_as<T, owm::current> || std::same_as<T, owm::hourly>;
 
     template <ResponseConcept Response>
     class weather{

@@ -42,14 +42,18 @@ int main(int argc, char** argv){
         return EXIT_FAILURE;
     }
 
-    auto city = weather.by<owm::city_name>(std::string{argv[1]});
+    try{
+        auto city = weather.by<owm::city_name>(std::string{argv[1]});
 
-    std::cout << city << std::endl;
-    std::cout << "Forecast for " << argv[2] << " hours:" << std::endl;
+        std::cout << city << std::endl;
+        std::cout << "Forecast for " << argv[2] << " hours:" << std::endl;
 
-    for (const auto& elem : forecast(city, std::stoi(std::string{argv[2]}))){
-        std::cout << elem << std::endl;
-        std::cout << std::endl;
+        for (const auto& elem : forecast(city, std::stoi(std::string{argv[2]}))){
+            std::cout << elem << std::endl;
+            std::cout << std::endl;
+        }
+    } catch(const owm::exception& exc){
+        std::cerr << exc.what() << std::endl;
     }
 
     return EXIT_SUCCESS;
