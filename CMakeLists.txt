@@ -4,6 +4,33 @@ project(owm
         DESCRIPTION "OpenWeatherMap API client in C++"
         HOMEPAGE_URL "https://github.com/LvalueReference/owm")
 
+include(FetchContent)
+
+FetchContent_Declare(
+    curl
+    GIT_REPOSITORY https://github.com/curl/curl
+)
+
+FetchContent_Declare(
+    curlpp
+    GIT_REPOSITORY https://github.com/jpbarrette/curlpp
+)
+
+FetchContent_Declare(
+    simdjson
+    GIT_REPOSITORY https://github.com/simdjson/simdjson.git
+)
+
+FetchContent_Declare(
+    magic_enum
+    GIT_REPOSITORY https://github.com/Neargye/magic_enum
+)
+
+FetchContent_Declare(
+    fmt
+    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+)
+
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -18,7 +45,9 @@ set(OWM_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(OWM_BUILD_SHARED_LIBS TRUE)
 set(CURL_LIBRARY libcurl)
 set(CURL_INCLUDE_DIR ${CURL_SOURCE_DIR}/include)
-set(CURLPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/curlpp/include)
+#set(CURLPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/curlpp/include)
+
+FetchContent_MakeAvailable(curl curlpp simdjson magic_enum)
 
 if (${OWM_BUILD_SHARED_LIBS} EQUAL TRUE)
     set(OWM_BUILD_TYPE SHARED)
@@ -29,7 +58,6 @@ endif()
 file(GLOB_RECURSE OWM_HEADERS ${OWM_INCLUDE_DIR}/*.hpp)
 file(GLOB_RECURSE OWM_SOURCE ${OWM_SOURCE_DIR}/*.cpp)
 
-add_subdirectory(libs)
 add_subdirectory(examples)
 
 include_directories(${OWM_INCLUDE_DIR})
@@ -41,7 +69,7 @@ target_link_libraries(owm PUBLIC
     simdjson::simdjson 
     magic_enum::magic_enum
     curlpp)
-target_include_directories(owm PUBLIC ${CURLPP_INCLUDE_DIR})
+#target_include_directories(owm PUBLIC ${CURLPP_INCLUDE_DIR})
 
 target_include_directories(owm PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/owm>

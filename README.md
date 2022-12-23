@@ -125,7 +125,7 @@ target_link_libraries(test_proj PUBLIC owm)
 # Building
 ```sh
 # Clone the repository
-git clone --recursive https://github.com/LvalueReference/owm.git
+git clone https://github.com/LvalueReference/owm.git
 cd owm
 
 # Build the library

@@ -1,9 +1,16 @@
 cmake_minimum_required(VERSION ${CMAKE_VERSION})
 project(example CXX)
 
+include(FetchContent)
+
 set(CMAKE_CXX_STANDARD 20)
 
-add_subdirectory(fmt) #fmt::format
+FetchContent_Declare(
+    fmt
+    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+)
+
+FetchContent_MakeAvailable(fmt)
 
 add_executable(example example.cpp)
 
