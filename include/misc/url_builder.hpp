@@ -9,7 +9,7 @@ namespace owm{
     concept WeatherResponseConcept = requires{
         T::target_url;
     } && std::constructible_from<std::string, decltype(T::target_url)>;
-    
+
     template <WeatherResponseConcept Response>
     inline std::string make_url(){
         return std::string{Response::target_url};

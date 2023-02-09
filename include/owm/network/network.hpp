@@ -9,10 +9,10 @@
 namespace owm{
     class network{
     private:
-        curlpp::Easy _handle;
-        std::string  _response;
+        curlpp::Easy m_handle;
+        std::string  m_response;
     public:
         void request(const std::string&, params&&);
-        std::string&& response() && noexcept;
+        [[nodiscard]] std::string&& response() && noexcept;
     };
 }

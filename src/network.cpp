@@ -7,28 +7,25 @@
 #include <numeric>
 
 void owm::network::request(const std::string& url, owm::params&& params){
-    using namespace std::string_literals;
-
     std::stringstream stream;
+    
+    std::string out;
+    out.reserve(params.size());
 
-    auto make_params = [](owm::params&& params){
-        return std::accumulate(params.begin(), params.end(), ""s, [](std::string out, const auto& pair){
-            out += pair.first;
-            out += "="s;
-            out += curlpp::escape(pair.second);
-            out += "&"s;
+    for (const auto& [key, value] : params){
+        out += key;
+        out += "=";
+        out += curlpp::escape(value);
+        out += "&";
+    }
 
-            return out;
-        });
-    };
+    m_handle.setOpt(curlpp::Options::Url(url + out));
+    m_handle.setOpt(curlpp::Options::WriteStream(&stream));
+    m_handle.perform();
 
-    _handle.setOpt(curlpp::Options::Url(url + make_params(std::move(params))));
-    _handle.setOpt(curlpp::Options::WriteStream(&stream));
-    _handle.perform();
-
-    _response = std::move(stream).str();
+    m_response = std::move(stream).str();
 }
 
 std::string&& owm::network::response() && noexcept{
-    return std::move(_response);
+    return std::move(m_response);
 }

@@ -1,58 +1,40 @@
+#include "owm/token.hpp"
 #include "owm/weather.hpp"
 #include "fmt/format.h"
 
-#include <cstdlib>
 #include <iostream>
-#include <cmath>
-
-std::ostream& operator<<(std::ostream& stream, const owm::hourly& w){
-    stream << fmt::format("City: {}", w.city_name()) << std::endl;
-    stream << fmt::format("Country: {}", w.country()) << std::endl;
-
-    return stream;
-}
-
-std::ostream& operator<<(std::ostream& stream, const owm::hourly_list& list){
-    stream << "[" << list.dt_txt() << "]" << std::endl;
-    stream << "Weather: " << list.main() << " (" << list.description() << ")" << std::endl;
-    stream << "Temperature: " << std::round(list.temp()) << " (min: " << list.temp_min() << " | max: " << list.temp_max() << ")"
-                                                                                           << std::endl;
-    stream << "Wind speed: " << list.wind_speed() << " m/s";
-
-    return stream;
-}
-
-auto forecast(const owm::hourly& hourly, int hours){
-    std::vector<owm::hourly_list> result;
-
-    for (int i = 0; i < hours; ++i){
-        result.push_back(hourly.list().at(i));
-    }
-
-    return result;
-}
 
 int main(int argc, char** argv){
-    owm::token token{"Your token", owm::units::metric, owm::lang::en};
-    owm::weather<owm::hourly> weather{token};
-    
-    if (argc != 3){
-        std::cerr << "Usage: ./example <City name> <hours>" << std::endl;
+    owm::token token{"API key", owm::units::metric, owm::lang::en};
+    owm::weather<owm::hourly> forecast{token};
 
+    if (argc != 2){
+        std::cerr << "Using ./example <city_name>" << std::endl;
         return EXIT_FAILURE;
     }
 
     try{
-        auto city = weather.by<owm::city_name>(std::string{argv[1]});
+        auto json = forecast.by<owm::city_name>(std::string{argv[1]}).fetch();
 
-        std::cout << city << std::endl;
-        std::cout << "Forecast for " << argv[2] << " hours:" << std::endl;
+        std::cout << "Weather for: " << argv[1] << std::endl;
 
-        for (const auto& elem : forecast(city, std::stoi(std::string{argv[2]}))){
-            std::cout << elem << std::endl;
-            std::cout << std::endl;
+        for (auto list : json["list"].get_array()){
+            std::string_view dt_txt = list["dt_txt"];
+            double temp = list["main"]["temp"];
+            double feels_like = list["main"]["feels_like"];
+            double temp_min = list["main"]["temp_min"];
+            double temp_max = list["main"]["temp_max"];
+            std::string_view main = list["weather"].at(0)["main"];
+            std::string_view description = list["weather"].at(0)["description"];
+            double wind_speed = list["wind"]["speed"];
+
+            fmt::print("\nDate: {}\n", dt_txt);
+            fmt::print("Temperature: {}°C (min: {}°C / max: {}°C)\n", temp, temp_min, temp_max);
+            fmt::print("Feels like: {}°C\n", feels_like);
+            fmt::print("Weather: {} ({})\n", main, description);
+            fmt::print("Wind speed: {} mps\n", wind_speed);
         }
-    } catch(const owm::exception& exc){
+    } catch(const std::exception& exc){
         std::cerr << exc.what() << std::endl;
     }
 

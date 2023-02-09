@@ -4,136 +4,165 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/lvaluereference/owm/badge)](https://www.codefactor.io/repository/github/lvaluereference/owm)
 ![OWM](./owm_logo.png)
 
-OWM
-==================================
-`OWM` is a C++ implementation of the [OpenWeatherMap API](https://openweathermap.org/api)
+# OWM
 
-# Before the beginning
-First of all, to start working with the library, you need to get an API key provided by OpenWeatherMap. You can create a key [here](https://home.openweathermap.org/api_keys). It is important to note that with a free subscription, you will only be able to receive the current weather. To get access to all the features of the API, you need to purchase a subscription. After you have received the key, you can start working with the library.
+OWM is a C++ implementation of the OpenWeatherMap API.
 
-**IMPORTANT!** Access to the OpenWeatherMap API services is provided by a paid subscription and with a free subscription you will not have access to all the functionality of the library. Learn more about subscribing to the service [here](https://openweathermap.org/price).
+# Before you start
 
-# Quick start
-Include the weather.hpp header file to use the library
-```cpp
+## Access Key
+
+In order to start working with the library, you need to obtain an API key for accessing OpenWeatherMap services. The key can be obtained on [this](https://home.openweathermap.org/api_keys) page. Keep in mind that OpenWeatherMap services operate on a subscription basis and with a free key, you will only have access to retrieving [current](https://openweathermap.org/current) weather.
+
+## Namespace
+
+All classes and methods of the library are in the `owm` namespace.
+
+## Header Files
+
+To start working with the library, you need to include the main header file `weather.hpp`.
+
+```C++
 #include "owm/weather.hpp"
 ```
+This file includes all the necessary tools for working with the library.
 
-## Token
-First we need to create an object of the `owm::token` class that will store your API key and settings for the library
+# Beginning of work
+
+## `owm::token`
+
+First of all, you need to declare an object of class `owm::token`, which will contain your API key and settings for the weather. The designer of the class takes 3 parameters:
+
+1. `std::string_view` - Mandatory parameter that should contain a valid access key to OpenWeatherMap API services
+
+2. `owm::units` - An optional parameter, which is an enum structure and means displayed units of measurement upon receipt of an answer from the API.The following arguments can be indicated:
+   * `owm::units::metric` - Data display in the metric system
+   * `owm::units::imperial` - Data display in the Imperial system
+   * `owm::units::standard` - default parameter
+3. `owm::lang` - An optional parameter, which is an enum structure and means displayed language when receiving data.
+   * `owm::lang::en` - You can clearly indicate that data in English.Also, if you do not specify the parameter `owm::lang`, will be the default parameter
+   * All other languages can be recognized on [this](https://openweathermap.org/current#multi) page. The language code on the page is completely coincided with the code in the enum-structure
+
+Also, the parameters of `owm::units` and `owm::lang` can be indicated separately or not indicate at all.In this case, the default parameters will indicate
 
 ```cpp
-owm::token token{"API key"};
-```
-The class can also take 2 optional arguments `owm::units` and `owm::lang`.
-
-`owm::units` is an enum that specifies which temperature scale to use:
-* `owm::units::metric` to use Celsius scale
-* `owm::units::imperial` to use Fahrenheit scale
-* `owm::units::standard` default parameter
-
-`owm::lang` is also an enum that specifies which language will be displayed in the output. For example, `owm::lang::ru` indicates that the Russian language will be used (`owm::lang::en` by default language). All available languages can be found [here](https://openweathermap.org/current#multi) and their code is fully consistent with the code in the enum structure.
-
-So we can get the following code:
-```cpp
-owm::token token{"API key", owm::units::metric, owm::lang::ru};
+owm::token token{"API key"}; //OK
+owm::token token{"API key", owm::units::metric, owm::lang::en}; //OK
+owm::token token{"API key", owm::units::metric}; //Ok
+owm::token token{"API key", owm::lang::en}; //Ok
 ```
 
-Each of the parameters can be specified separately, leaving only `owm::units` or `owm::lang`:
-```cpp
-owm::token token{"API key", owm::units::metric};
-```
-```cpp
-owm::token token{"API key", owm::lang::ru};
-```
-
-# How to get weather
 ## `owm::weather`
-To interact with the API, there is a main class `owm::weather`:
+
+The class `owm::weather` is the main class that provides an interface for working with the library. Let's look at his announcement.For example:
+
 ```cpp
+#include "owm/weather.hpp"
+
+owm::token token{"API key", owm::units::metric};
 owm::weather<Response> weather{token};
 ```
 
-The class takes an object of type `owm::token` as a constructor parameter.
+The argument of the `Response` template is a class that can take the type of weather with which you want to work. The type of weather is expressed in the classes `owm::current`,`owm::hourly`, `owm::daily`:
 
-As a template (`Response`), the class accepts one of the structures that contains methods for interacting with the type of weather:
-* `owm::current` - indicates that the `owm::weather` class will interact with the current weather
-* `owm::hourly` - specifies that the `owm::weather` class will interact with the hourly weather forecast
+1. `owm::current` - The class that contains the interface for working with [current](https://openweathermap.org/current#one) weather
+2. `owm::hourly` - [Hourly](https://openweathermap.org/api/hourly-rence) forecast
+3. `owm::daily` - Forecast for [days](https://openweathermap.org/forecast16)
 
-So you can get the following code:
+Let's create a class for working with current weather:
 ```cpp
-owm::weather<owm::current> current_weather{token};
-owm::weather<owm::hourly> hourly_forecast{token};
+#include "owm/weather.hpp"
+
+owm::token token{"API key", omw::units::metric};
+omw::weather<owm::current> current_weather{token};
 ```
 
-The class contains one single template method `by()`, which returns an object of type Response, which we passed to the class template `owm::weather`
+The designer of the class `owm::weather` takes an object of class `owm::token`.
 
-Its signature looks like this:
+## Getting weather
+In order to get the weather for the requested city, there is a method of `.by()`. Let's look at an example:
 ```cpp
-Response owm::weather::by<owm::wtag>(args...);
+#include "owm/weather.hpp"
+
+owm::token token{"API key", omw::units::metric};
+omw::weather<owm::current> current_weather{token};
+
+auto city = current_weather.by<owm::city_name>("Berlin");
 ```
-`owm::wtag` is an enum that specifies how we get the city we want to know the weather for.
 
-It can take:
-* `owm::city_name` - Specifies that the city will be retrieved by its name
-* `owm::city_id` - Specifies that the city will be retrieved by id (city IDs can be found [here](https://bulk.openweathermap.org/sample/))
-* `owm::geo_coords` - pecifies that the city will be retrieved by coordinates
+In the example above, we requested current weather for the city of Berlin. What is `owm::city_name`? This is an enum structure that indicates that the weather request in the city will be made by the name of the city. In total, 3 types of weather query are available:
 
-The passed function parameter depends on the enum value that we passed to the template. A string for `owm::city_name`, an integer for `owm::city_id` and 2 floats for `owm::geo_coords`, which should represent latitude and longitude (in order).
+1. `owm::city_name` - Weather request in the city by its name
+2. `owm::city_id` - Weather request for city id (you can find out all ID [here](https://bulk.openweathermap.org/sample/))
+3. `owm::geo_coords` - Weather request for geographical coordinates (lat, lon);
+   
+For example:
 ```cpp
-owm::weather<owm::current> weather{token};
+#include "owm/weather.hpp"
 
-auto by_city_name = weather.by<owm::city_name>("New-York");
-auto by_id = weather.by<owm::city_id>(1234);
-auto by_coords = weather.by<owm::geo_coords>(123.4, 567.8);
+owm::token token{"API key", omw::units::metric};
+omw::weather<owm::current> current_weather{token};
+
+auto by_name = current_weather.by<owm::city_name>("Berlin");
+auto by_id = current_weather.by<owm::city_id>(1234);
+auto by_coords = current_weather.by<owm::geo_coords>(123.4, 567.8);
 ```
 
-In case of an API error, the `by()` method will throw an exception of type `owm::exception`, where you can get more specific information about the error.
-
-## Response classes
-These classes contain methods that are described in the OpenWeatherMap API documentation
-
-* For `owm::current` [here](https://openweathermap.org/current#:~:text=%3A%20200%0A%7D-,%D0%9F%D0%BE%D0%BB%D1%8F%20%D0%B2%20%D0%BE%D1%82%D0%B2%D0%B5%D1%82%D0%B5%20API,-coord)
-* For `owm::hourly` [here](https://openweathermap.org/api/hourly-forecast#:~:text=%3A%201661882248%0A%20%20%7D%0A%7D-,Fields%20in%20API%20response,-cod%20Internal%20parameter)
-
-In addition to the above, the `owm::hourly` class contains the `list()` method, which returns a `std::vector<owm::hourly_list>`, which stores the list methods described in the json string. List methods can be found [here](https://openweathermap.org/api/hourly-forecast#:~:text=this%20API%20call-,list,-list.dt%20Time).
+Please note that in the case of working with `owm::hourly` or `owm::daily`, an optional `cnt` parameter is also available, which indicates how much data on the forecast will display.You can specify this parameter after the city argument.For example:
 ```cpp
-owm::weather<owm::hourly> forecast{token};
-std::cout << "City: " << forecast.by<owm::city_name>("City").description() << std::endl; //using owm::hourly class methods
-std::cout << "Forecast:" << std::endl;
+#include "owm/weather.hpp"
 
-for (const auto& elem : forecast.list()){
-  std::cout << elem.temp_max() << std::endl; //using owm::hourly_list class methods
-}
+owm::token token{"API key", omw::units::metric};
+omw::weather<owm::daily> daily_weather{token};
+
+auto by_name = daily_weather.by<owm::city_name>("Berlin", /*cnt:*/ 5);
 ```
 
-A better example can be found [here](./examples/example.cpp).
+## Working with JSON
+Finally, we came to the moment of receipt of data about the weather.To get data, it is necessary to call the `.fetch()` method, for example:
 
-# CMake integration
-The project can be easily linked to your cmake project
-```cmake
-cmake_minimum_required(VERSION ${CMAKE_VERSION})
-project(test_proj CXX)
+```cpp
+#include "owm/weather.hpp"
 
-set(CMAKE_CXX_STANDARD 20)
+owm::token token{"API key", omw::units::metric};
+omw::weather<owm::daily> daily_weather{token};
 
-add_subdirectory(owm)
-add_executable(test_proj main.cpp)
-
-target_link_libraries(test_proj PUBLIC owm)
+auto json = daily_weather.by<owm::city_name>("Berlin").fetch();
 ```
-# Building
+
+The `fetch()` method returns a class-explosive class above the object`simdjson::dom::element`.  From this moment, you will operate on the library interface [simdjson](https://github.com/simdjson/simdjson). The structure of the document contains JSON, which returned from the server. An example of such a JSON structure can be found [here](https://openweathermap.org/api) in the Openweathermap API documentation. Let's try to get, for example, the coordinates of the requested city:
+
+```cpp
+#include "owm/weather.hpp"
+
+owm::token token{"API key", omw::units::metric};
+omw::weather<owm::daily> daily_weather{token};
+
+auto json = daily_weather.by<owm::city_name>("Berlin").fetch();
+double lat = json["city"]["coord"]["lat"];
+double lon = json["city"]["coord"]["lon"];
+```
+
+A more specific example can be found in [example](examples/example.cpp)
+
+## Error processing
+The library has a class for processing API errors - `owm::exception`, which is inherited from`std::exception`.
+
+Error output format: `"owm: code:error message"`
+
+# Project assembly
 ```sh
-# Clone the repository
 git clone https://github.com/LvalueReference/owm.git
 cd owm
-
-# Build the library
 mkdir build
 cd build
 cmake ..
 cmake --build .
 ```
 
-# License
-The project is available under the [MIT](https://opensource.org/licenses/MIT) license.
+# Used libraries
+* simdjson - https://github.com/simdjson/simdjson
+* cURL - https://github.com/curl/curl
+* curlpp - https://github.com/jpbarrette/curlpp
+* magic_enum - https://github.com/Neargye/magic_enum
+* FMT - https://github.com/fmtlib/fmt.git

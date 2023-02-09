@@ -1,6 +1,5 @@
 #include "owm/exception.hpp"
-#include "simdjson/dom/element.h"
-#include "magic_enum.hpp"
+#include "simdjson.h"
 
 #include <charconv>
 #include <sstream>
@@ -12,7 +11,7 @@ inline int64_t code_to_int(auto json) noexcept{
     if (json.is_string()){
         std::string_view svc = json.get_string();
 
-        std::from_chars(svc.data(), svc.data() + svc.size(), res);
+        std::from_chars<int64_t>(svc.data(), svc.data() + svc.size(), res);
     } else{
         res = json.get_int64();
     }
@@ -21,34 +20,30 @@ inline int64_t code_to_int(auto json) noexcept{
 }
 
 owm::exception::exception(std::string&& resp) noexcept
-    : _response(std::move(resp))
+    : m_response(std::move(resp))
 {
-    _json = _parser.parse(_response);
-    _message = _json["message"];
-    _code = code_to_int(_json["cod"]);
+    simdjson::dom::parser parser;
+    simdjson::dom::element json = parser.parse(m_response);
+
+    m_message = json["message"];
+    m_code = code_to_int(json["cod"]);
 }
 
 const char* owm::exception::what() const noexcept{
     std::stringstream res;
-    res << "owm: " << std::to_string(_code) << ":" << _message;
+    res << "owm: " << std::to_string(m_code) << ":" << m_message;
 
-    _m_what = std::move(res).str();
+    m_what = std::move(res).str();
 
-    return _m_what.data();
+    return m_what.data();
 }
 
-[[maybe_unused]] 
-std::string_view owm::exception::show_json() const noexcept{
-    return _response;
-}
-
-[[maybe_unused]] 
 std::string_view owm::exception::error_message() const noexcept{
-    return _message;
+    return m_message;
 }
 
 int64_t owm::exception::error_code() const noexcept{
-    return _code;
+    return m_code;
 }
 
 bool owm::exception::is_error_code(const std::string& resp){
@@ -57,5 +52,5 @@ bool owm::exception::is_error_code(const std::string& resp){
 
     int64_t code = code_to_int(json["cod"]);
 
-    return code > 400;
+    return code >= 400;
 }

@@ -1,10 +1,21 @@
 cmake_minimum_required(VERSION 3.16)
 project(owm
         LANGUAGES CXX
-        DESCRIPTION "OpenWeatherMap API client in C++"
+        DESCRIPTION "OpenWeatherMap API client on C++"
         HOMEPAGE_URL "https://github.com/LvalueReference/owm")
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+    
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+    
+message(STATUS "OWM: Build type - ${CMAKE_BUILD_TYPE}")
+
 include(FetchContent)
+
+message(STATUS "OWM: Installing libraries...")
 
 FetchContent_Declare(
     curl
@@ -31,23 +42,15 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/fmtlib/fmt.git
 )
 
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
-endif()
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-
-message(STATUS "owm: build type: ${CMAKE_BUILD_TYPE}")
-
 set(OWM_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(OWM_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(OWM_BUILD_SHARED_LIBS TRUE)
 set(CURL_LIBRARY libcurl)
 set(CURL_INCLUDE_DIR ${CURL_SOURCE_DIR}/include)
-#set(CURLPP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/curlpp/include)
 
 FetchContent_MakeAvailable(curl curlpp simdjson magic_enum)
+
+message(STATUS "OWM: Installing libraries... - done")
 
 if (${OWM_BUILD_SHARED_LIBS} EQUAL TRUE)
     set(OWM_BUILD_TYPE SHARED)
@@ -64,16 +67,22 @@ include_directories(${OWM_INCLUDE_DIR})
 
 add_library(owm ${OWM_BUILD_TYPE} ${OWM_HEADERS} ${OWM_SOURCE})
 
-target_link_libraries(owm PUBLIC 
+target_link_libraries(
+    owm PUBLIC 
     CURL::libcurl 
     simdjson::simdjson 
     magic_enum::magic_enum
-    curlpp)
-#target_include_directories(owm PUBLIC ${CURLPP_INCLUDE_DIR})
+    curlpp
+)
 
-target_include_directories(owm PRIVATE
+target_include_directories(
+        owm PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/owm>
-        $<INSTALL_INTERFACE:include/owm>)
-target_include_directories(owm PUBLIC
+        $<INSTALL_INTERFACE:include/owm>
+)
+
+target_include_directories(
+        owm PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>)
+        $<INSTALL_INTERFACE:include>
+)

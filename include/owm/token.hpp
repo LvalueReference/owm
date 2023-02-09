@@ -2,6 +2,7 @@
 
 #include <string_view>
 #include <string>
+#include <variant>
 
 namespace owm{
     enum class units{standard, metric, imperial};
@@ -10,12 +11,11 @@ namespace owm{
                     th, tr, ua, uk, vi, zh_cn, zh_tw, zu};
 
     struct token{
-        const std::string _units;
-        const std::string _lang;
-        const std::string _appid;
+        const std::string m_units;
+        const std::string m_lang;
+        const std::string m_appid;
 
-        explicit token(std::string_view) noexcept;
-        explicit token(std::string_view, enum units = units::standard, enum lang = lang::en) noexcept;
-        explicit token(std::string_view, enum lang = lang::en, enum units = units::standard) noexcept;
+        token(std::string_view, enum units = units::standard, enum lang = lang::en) noexcept;
+        token(std::string_view, std::variant<enum units, enum lang>) noexcept;
     };
 }
