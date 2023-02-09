@@ -5,13 +5,13 @@
 #include <sstream>
 #include <array>
 
-inline int64_t code_to_int(auto json) noexcept{
+static int64_t code_to_int(auto json) noexcept{
     int64_t res;
 
     if (json.is_string()){
         std::string_view svc = json.get_string();
 
-        std::from_chars<int64_t>(svc.data(), svc.data() + svc.size(), res);
+        std::from_chars(svc.data(), svc.data() + svc.size(), res);
     } else{
         res = json.get_int64();
     }
