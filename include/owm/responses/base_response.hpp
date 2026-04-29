@@ -1,19 +1,19 @@
 #pragma once
 
-#include "misc/json_handler.hpp"
+#include "unwrapped.hpp"
 
 #include <string>
-#include <string_view>
-
-#include <iostream>
 
 namespace owm{
     class base_response{
-    private:
-        std::string m_json_str;
     public:
         explicit base_response(std::string str) noexcept;
-    public:
-        owm::json_handler fetch() const noexcept;
+
+        [[nodiscard]]
+        unwrapped fetch() const noexcept;
+        [[nodiscard]]
+        std::string fetch_json_str() const noexcept;
+    private:
+        std::string json_str_;
     };
 }

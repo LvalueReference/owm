@@ -1,12 +1,10 @@
-#include "owm/token.hpp"
 #include "owm/weather.hpp"
-#include "fmt/format.h"
 
-#include <iostream>
+#include <print>
 
 int main(int argc, char** argv){
-    owm::token token{"API key", owm::units::metric, owm::lang::en};
-    owm::weather<owm::hourly> forecast{token};
+    owm::token token{"TOKEN", owm::units::metric, owm::lang::en};
+    owm::weather<owm::current> forecast{token};
 
     if (argc != 2){
         std::cerr << "Using ./example <city_name>" << std::endl;
@@ -14,28 +12,31 @@ int main(int argc, char** argv){
     }
 
     try{
-        auto json = forecast.by<owm::city_name>(std::string{argv[1]}).fetch();
+        auto unwrapped = forecast.by<owm::city_name>(std::string{argv[1]}).fetch();
 
-        std::cout << "Weather for: " << argv[1] << std::endl;
+        auto coord = unwrapped["coord"];
+        auto weather = unwrapped["weather"][0];
+        auto main = unwrapped["main"];
+        auto wind = unwrapped["wind"];
+        auto sys = unwrapped["sys"];
+        std::string city_name = unwrapped["name"];
 
-        for (auto list : json["list"].get_array()){
-            std::string_view dt_txt = list["dt_txt"];
-            double temp = list["main"]["temp"];
-            double feels_like = list["main"]["feels_like"];
-            double temp_min = list["main"]["temp_min"];
-            double temp_max = list["main"]["temp_max"];
-            std::string_view main = list["weather"].at(0)["main"];
-            std::string_view description = list["weather"].at(0)["description"];
-            double wind_speed = list["wind"]["speed"];
+        auto [lon, lat] = std::make_pair(*coord["lon"].get_double(), *coord["lat"].get_double());
+        std::string weather_main = weather["main"];
+        std::string description = weather["description"];
+        int64_t temp = static_cast<int64_t>(*main["temp"].get_double());
+        int64_t temp_min = static_cast<int64_t>(*main["temp_min"].get_double());
+        int64_t temp_max = static_cast<int64_t>(*main["temp_max"].get_double());
+        double wind_speed = wind["speed"];
+        std::string country = sys["country"];
 
-            fmt::print("\nDate: {}\n", dt_txt);
-            fmt::print("Temperature: {}°C (min: {}°C / max: {}°C)\n", temp, temp_min, temp_max);
-            fmt::print("Feels like: {}°C\n", feels_like);
-            fmt::print("Weather: {} ({})\n", main, description);
-            fmt::print("Wind speed: {} mps\n", wind_speed);
-        }
-    } catch(const std::exception& exc){
-        std::cerr << exc.what() << std::endl;
+        // Easy print
+        std::print("Weather for {}, {} (lon: {}, lat: {})", city_name, country, lon, lat);
+        std::print("==== [{} | {}] ====", weather_main, description);
+        std::print("Temperature: {}°C (min: {}°C, max: {}°C)", temp, temp_min, temp_max);
+        std::print("Wind speed: {}m/s", wind_speed);
+    } catch(const owm::exception& exc){
+        std::cerr << "[OWM:error] - " << exc.what() << std::endl;
     }
 
     return EXIT_SUCCESS;

@@ -33,7 +33,7 @@ This file includes all the necessary tools for working with the library.
 
 First of all, you need to declare an object of class `owm::token`, which will contain your API key and settings for the weather. The designer of the class takes 3 parameters:
 
-1. `std::string_view` - Mandatory parameter that should contain a valid access key to OpenWeatherMap API services
+1. `std::string_view` - Required parameter that should contain a valid access key to OpenWeatherMap API services
 
 2. `owm::units` - An optional parameter, which is an enum structure and means displayed units of measurement upon receipt of an answer from the API.The following arguments can be indicated:
    * `owm::units::metric` - Data display in the metric system
@@ -118,8 +118,8 @@ omw::weather<owm::daily> daily_weather{token};
 auto by_name = daily_weather.by<owm::city_name>("Berlin", /*cnt:*/ 5);
 ```
 
-## Working with JSON
-Finally, we came to the moment of receipt of data about the weather.To get data, it is necessary to call the `.fetch()` method, for example:
+## Working with parsed data
+Finally, we came to the moment of receipt of data about the weather. To get data, it is necessary to call the `.fetch()` method, for example:
 
 ```cpp
 #include "owm/weather.hpp"
@@ -130,7 +130,7 @@ omw::weather<owm::daily> daily_weather{token};
 auto json = daily_weather.by<owm::city_name>("Berlin").fetch();
 ```
 
-The `fetch()` method returns a class-explosive class above the object`simdjson::dom::element`.  From this moment, you will operate on the library interface [simdjson](https://github.com/simdjson/simdjson). The structure of the document contains JSON, which returned from the server. An example of such a JSON structure can be found [here](https://openweathermap.org/api) in the Openweathermap API documentation. Let's try to get, for example, the coordinates of the requested city:
+The `fetch()` method returns a class-explosive class above the object `owm::unwrapped`.:
 
 ```cpp
 #include "owm/weather.hpp"
@@ -138,9 +138,11 @@ The `fetch()` method returns a class-explosive class above the object`simdjson::
 owm::token token{"API key", omw::units::metric};
 omw::weather<owm::daily> daily_weather{token};
 
-auto json = daily_weather.by<owm::city_name>("Berlin").fetch();
-double lat = json["city"]["coord"]["lat"];
-double lon = json["city"]["coord"]["lon"];
+auto unwrapped = daily_weather.by<owm::city_name>("Berlin").fetch();
+auto [lon, lat] = std::make_pair(
+   *unwrapped["coord"]["lon"].get_double(),
+   *unwrapped["coord"]["lat"].get_double()
+);
 ```
 
 A more specific example can be found in [example](examples/example.cpp)
@@ -152,7 +154,7 @@ Error output format: `"owm: code:error message"`
 
 # Project assembly
 ```sh
-git clone https://github.com/LvalueReference/owm.git
+git clone https://github.com/LvalueReference/owm.git --recursive
 cd owm
 mkdir build
 cd build
@@ -162,7 +164,4 @@ cmake --build .
 
 # Used libraries
 * simdjson - https://github.com/simdjson/simdjson
-* cURL - https://github.com/curl/curl
-* curlpp - https://github.com/jpbarrette/curlpp
-* magic_enum - https://github.com/Neargye/magic_enum
 * FMT - https://github.com/fmtlib/fmt.git

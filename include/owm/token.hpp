@@ -11,11 +11,11 @@ namespace owm{
                     th, tr, ua, uk, vi, zh_cn, zh_tw, zu};
 
     struct token{
-        const std::string m_units;
-        const std::string m_lang;
-        const std::string m_appid;
+        const std::string units_;
+        const std::string lang_;
+        const std::string appid_;
 
-        token(std::string_view, enum units = units::standard, enum lang = lang::en) noexcept;
-        token(std::string_view, std::variant<enum units, enum lang>) noexcept;
+        token(std::string_view, units = units::standard, lang = lang::en) noexcept;
+        token(std::string_view, std::variant<units, lang>) noexcept;
     };
 }

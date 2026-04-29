@@ -1,0 +1,9 @@
+[submodule "external/simdjson"]
+	path = external/simdjson
+	url = https://github.com/simdjson/simdjson
+[submodule "external/magic_enum"]
+	path = external/magic_enum
+	url = https://github.com/Neargye/magic_enum
+[submodule "external/fmt"]
+	path = external/fmt
+	url = https://github.com/fmtlib/fmt

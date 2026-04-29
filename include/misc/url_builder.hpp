@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <type_traits>
 #include <concepts>
 
 namespace owm{
@@ -11,7 +10,7 @@ namespace owm{
     } && std::constructible_from<std::string, decltype(T::target_url)>;
 
     template <WeatherResponseConcept Response>
-    inline std::string make_url(){
+    std::string make_url(){
         return std::string{Response::target_url};
     }
 }

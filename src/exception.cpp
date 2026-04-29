@@ -3,7 +3,6 @@
 
 #include <charconv>
 #include <sstream>
-#include <array>
 
 static int64_t code_to_int(auto json) noexcept{
     int64_t res;
@@ -20,30 +19,30 @@ static int64_t code_to_int(auto json) noexcept{
 }
 
 owm::exception::exception(std::string&& resp) noexcept
-    : m_response(std::move(resp))
+    : response_(std::move(resp))
 {
     simdjson::dom::parser parser;
-    simdjson::dom::element json = parser.parse(m_response);
+    simdjson::dom::element json = parser.parse(response_);
 
-    m_message = json["message"];
-    m_code = code_to_int(json["cod"]);
+    message_ = json["message"];
+    code_ = code_to_int(json["cod"]);
 }
 
 const char* owm::exception::what() const noexcept{
     std::stringstream res;
-    res << "owm: " << std::to_string(m_code) << ":" << m_message;
+    res << "owm: " << std::to_string(code_) << ":" << message_;
 
-    m_what = std::move(res).str();
+    what_ = std::move(res).str();
 
-    return m_what.data();
+    return what_.data();
 }
 
 std::string_view owm::exception::error_message() const noexcept{
-    return m_message;
+    return message_;
 }
 
 int64_t owm::exception::error_code() const noexcept{
-    return m_code;
+    return code_;
 }
 
 bool owm::exception::is_error_code(const std::string& resp){

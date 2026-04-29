@@ -1,88 +1,75 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION ${CMAKE_VERSION})
 project(owm
+        VERSION 1.2
         LANGUAGES CXX
         DESCRIPTION "OpenWeatherMap API client on C++"
-        HOMEPAGE_URL "https://github.com/LvalueReference/owm")
+        HOMEPAGE_URL "https://github.com/LvalueReference/owm"
+)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(OWM_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(OWM_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+if (NOT OWM_BUILD_TYPE)
+    set(OWM_BUILD_TYPE_V STATIC)
+else()
+    set(OWM_BUILD_TYPE_V SHARED)
+endif()
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
-endif()
-    
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-    
-message(STATUS "OWM: Build type - ${CMAKE_BUILD_TYPE}")
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "" FORCE)
+endif ()
 
-include(FetchContent)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O2 -g -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
-message(STATUS "OWM: Installing libraries...")
+message(STATUS "OWM Build type: ${CMAKE_BUILD_TYPE}")
 
-FetchContent_Declare(
-    curl
-    GIT_REPOSITORY https://github.com/curl/curl
-)
+set(OWM_BUILD_EXAMPLES ON)
 
-FetchContent_Declare(
-    curlpp
-    GIT_REPOSITORY https://github.com/jpbarrette/curlpp
-)
-
-FetchContent_Declare(
-    simdjson
-    GIT_REPOSITORY https://github.com/simdjson/simdjson.git
-)
-
-FetchContent_Declare(
-    magic_enum
-    GIT_REPOSITORY https://github.com/Neargye/magic_enum
-)
-
-FetchContent_Declare(
-    fmt
-    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-)
-
-set(OWM_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-set(OWM_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
-set(OWM_BUILD_SHARED_LIBS TRUE)
-set(CURL_LIBRARY libcurl)
-set(CURL_INCLUDE_DIR ${CURL_SOURCE_DIR}/include)
-
-FetchContent_MakeAvailable(curl curlpp simdjson magic_enum)
-
-message(STATUS "OWM: Installing libraries... - done")
-
-if (${OWM_BUILD_SHARED_LIBS} EQUAL TRUE)
-    set(OWM_BUILD_TYPE SHARED)
-else()
-    set(OWM_BUILD_TYPE STATIC)
+if (OWM_BUILD_EXAMPLES)
+    message(STATUS "OWM: Build examples option is ON!")
+    add_subdirectory(examples)
 endif()
 
-file(GLOB_RECURSE OWM_HEADERS ${OWM_INCLUDE_DIR}/*.hpp)
-file(GLOB_RECURSE OWM_SOURCE ${OWM_SOURCE_DIR}/*.cpp)
+add_subdirectory(external/fmt)
+add_subdirectory(external/simdjson)
+add_subdirectory(external/magic_enum)
 
-add_subdirectory(examples)
+file(GLOB_RECURSE OWM_HEADERS CONFIGURE_DEPENDS
+    include/owm/*.hpp
+)
 
-include_directories(${OWM_INCLUDE_DIR})
+file(GLOB_RECURSE OWM_SOURCES CONFIGURE_DEPENDS
+    src/*.cpp
+)
 
-add_library(owm ${OWM_BUILD_TYPE} ${OWM_HEADERS} ${OWM_SOURCE})
+find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenSSL REQUIRED COMPONENTS SSL Crypto)
+
+add_library(owm ${OWM_BUILD_TYPE_V} ${OWM_SOURCES})
+add_library(owm::owm ALIAS owm)
 
 target_link_libraries(
-    owm PUBLIC 
-    CURL::libcurl 
-    simdjson::simdjson 
-    magic_enum::magic_enum
-    curlpp
+        owm PRIVATE
+        Boost::system
+        OpenSSL::SSL
+        OpenSSL::Crypto
+        simdjson::simdjson
+        magic_enum::magic_enum
 )
 
 target_include_directories(
         owm PRIVATE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/owm>
+        $<BUILD_INTERFACE:${OWM_INCLUDE_DIR}/owm>
         $<INSTALL_INTERFACE:include/owm>
 )
 
 target_include_directories(
         owm PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${OWM_INCLUDE_DIR}>
         $<INSTALL_INTERFACE:include>
 )

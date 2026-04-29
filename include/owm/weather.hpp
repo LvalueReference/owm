@@ -8,54 +8,55 @@
 #include "token.hpp"
 #include "exception.hpp"
 
-#include <string_view>
 #include <utility>
 
 namespace owm{
-    template <class T>
-    concept ResponseConcept = std::same_as<T, owm::current> ||
-                              std::same_as<T, owm::hourly> ||
-                              std::same_as<T, owm::daily>;
+    namespace concepts {
+        template <class T>
+        concept ResponseConcept = std::same_as<T, current> ||
+                                  std::same_as<T, hourly> ||
+                                  std::same_as<T, daily>;
+    }
 
-    template <ResponseConcept Response>
+    template <concepts::ResponseConcept Response>
     class weather{
-    private:
-        token m_token;
     public:
         explicit weather(token) noexcept;
-    public:
+
         template <wtag Type, class... Args>
         [[nodiscard]] Response by(Args&&...) const;
     private:
-        [[nodiscard]] params&& append(params&&) const noexcept;
+        token token_;
+
+        [[nodiscard]] misc::params_t&& append(misc::params_t&&) const noexcept;
     };
 }
 
-template <owm::ResponseConcept Response>
-owm::weather<Response>::weather(owm::token token) noexcept
-    : m_token(token){}
+template <owm::concepts::ResponseConcept Response>
+owm::weather<Response>::weather(token tok) noexcept
+    : token_(tok){}
 
-template <owm::ResponseConcept Response>
+template <owm::concepts::ResponseConcept Response>
 template <owm::wtag Type, class... Args>
 Response owm::weather<Response>::by(Args&&... args) const{
-    owm::network network;
-    auto params = owm::params_builder<Response, Type>::create(std::forward<Args>(args)...);
+    network network;
+    auto params = params_builder<Response, Type>::create(std::forward<Args>(args)...);
 
     network.request(owm::make_url<Response>(), append(std::move(params)));
 
     auto response = std::move(network).response();
 
-    if(owm::exception::is_error_code(response))
-        throw owm::exception{std::move(response)};
+    if(exception::is_error_code(response))
+        throw exception{std::move(response)};
 
     return Response{std::move(response)};
 }
 
-template <owm::ResponseConcept Response>
-owm::params&& owm::weather<Response>::append(owm::params&& params) const noexcept{
-    params.emplace_back("appid", m_token.m_appid);
-    params.emplace_back("lang",  m_token.m_lang);
-    params.emplace_back("units", m_token.m_units);
+template <owm::concepts::ResponseConcept Response>
+owm::misc::params_t&& owm::weather<Response>::append(misc::params_t&& params) const noexcept{
+    params.emplace_back("appid", token_.appid_);
+    params.emplace_back("lang",  token_.lang_);
+    params.emplace_back("units", token_.units_);
 
     return std::move(params);
 }

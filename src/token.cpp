@@ -1,7 +1,6 @@
 #include "owm/token.hpp"
-#include "magic_enum.hpp"
+#include <magic_enum/magic_enum.hpp>
 #include <variant>
-#include <optional>
 
 using namespace magic_enum;
 
@@ -14,14 +13,14 @@ static constexpr Enum get_arg(const std::variant<VariantArgs...>& v) noexcept{
     }
 }
 
-owm::token::token(std::string_view key, owm::units units, owm::lang lang) noexcept
-    : m_appid{key},
-      m_units{magic_enum::enum_name(units)},
-      m_lang{magic_enum::enum_name(lang)}
+owm::token::token(std::string_view key, units units, lang lang) noexcept
+    : appid_{key}
+    , units_{enum_name(units)}
+    , lang_{enum_name(lang)}
 {}
 
-owm::token::token(std::string_view key, std::variant<owm::units, owm::lang> data) noexcept
-    : m_appid{key},
-      m_units{magic_enum::enum_name(get_arg<owm::units>(data))},
-      m_lang{magic_enum::enum_name(get_arg<owm::lang>(data))}
+owm::token::token(std::string_view key, std::variant<units, lang> data) noexcept
+    : appid_{key}
+    , units_{enum_name(get_arg<units>(data))}
+    , lang_{enum_name(get_arg<lang>(data))}
 {}
